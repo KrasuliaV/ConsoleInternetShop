@@ -21,12 +21,12 @@ public class Product extends AbstractEntity {
     }
 
     @Override
-    public void setId(int id) {
+    public void setId(long id) {
         super.setId(id);
     }
 
     @Override
-    public int getId() {
+    public long getId() {
         return super.getId();
     }
 }

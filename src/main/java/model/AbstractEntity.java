@@ -1,13 +1,13 @@
 package model;
 
 public class AbstractEntity {
-    private int id;
+    private long id;
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 }
