@@ -2,12 +2,11 @@ package model;
 
 import java.util.ArrayList;
 
-
 public class Order extends AbstractEntity {
 
     private String ownerName;
     private boolean isConfirmed;
-    private ArrayList<String> product;
+    private ArrayList<Product> product;
 
 
     public void setConfirmed(boolean confirmed) {
@@ -27,11 +26,11 @@ public class Order extends AbstractEntity {
     }
 
 
-    public void setProduct(ArrayList<String> product) {
+    public void setProduct(ArrayList<Product> product) {
         this.product = product;
     }
 
-    public ArrayList<String> getProduct() {
+    public ArrayList<Product> getProduct() {
         return product;
     }
 

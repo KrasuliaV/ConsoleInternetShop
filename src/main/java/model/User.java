@@ -7,13 +7,18 @@ public class User extends AbstractEntity {
     private String password;
     private boolean isBlocked;
     private UserRole role;
-    private ArrayList<String> order;
+    private ArrayList<Order> order;
 
-    public void setOrder(ArrayList<String> order) {
+    enum UserRole {
+        ADMIN,
+        CUSTOMER
+    }
+
+    public void setOrder(ArrayList<Order> order) {
         this.order = order;
     }
 
-    public ArrayList<String> getOrder() {
+    public ArrayList<Order> getOrder() {
         return order;
     }
 
@@ -47,11 +52,6 @@ public class User extends AbstractEntity {
 
     public void setRole(UserRole role) {
         this.role = role;
-    }
-
-    enum UserRole {
-        ADMIN,
-        CUSTOMER
     }
 
     @Override
