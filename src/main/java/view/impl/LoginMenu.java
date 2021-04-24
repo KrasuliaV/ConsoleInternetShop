@@ -1,63 +1,82 @@
 package view.impl;
 
 
+import model.User;
+import model.UserRole;
 import service.UserService;
 import view.Menu;
 
+import java.util.Optional;
 import java.util.Scanner;
 
 public class LoginMenu implements Menu {
 
-    private UserService userService;
-    private String[] items = {"1.Login", "2.Register"};
-    private Scanner scanner;
+    private Scanner scanner = new Scanner(System.in);
+    private UserService userService = new UserServiceImpl();
+    new MainMenu().showSubMenu(new UserMenu(), user);
+
+    private String[] items = {"1.Login", "2.Register", "3.Back", "0.Exit"};
+
 
     @Override
     public void show() {
-        showItems(items);
-        System.out.println("0. Exit");
-
-        scanner = new Scanner(System.in);
-
-
         while (true) {
-            int choice = scanner.nextInt();
+            for (String item : items) {
+                System.out.println(item);
+            }
+            System.out.println("Choose option:");
 
-            switch (choice) {
-                case 1:
-                    loginSubMenu(scanner);
+            switch (scanner.nextLine()) {
+                case "1":
+                    loginSubMenu();
                     break;
-                case 2:
-                    loginSubMenu(scanner);
+
+                case "2":
+                    registerSubMenu();
                     break;
-                case 0:
-                    exit();
+                case "9":
+                    back();
+                    break;
+                case "0":
+                    exitProgram();
                     break;
             }
         }
     }
 
-    @Override
-    public void exit() {
-        System.exit(0);
-    }
-
-    private void loginSubMenu(Scanner scanner) {
-        System.out.println("input login:");
+    private void registerSubMenu() {
+        System.out.println("login:");
         String login = scanner.nextLine();
 
-        System.out.println("input password:");
+        System.out.println("password:");
         String password = scanner.nextLine();
 
-        if (userService.login(login, password)) {
+        User user = userService.register(login, password);
+        new MainMenu().showSubMenu(new UserMenu(), user);
+    }
 
+    private void loginSubMenu() {
+        System.out.println("your login:");
+        String login = scanner.nextLine();
+
+        System.out.println("your password:");
+        String password = scanner.nextLine();
+
+        User user = userService.login(login, password);
+        if (Optional.ofNullable(user).isPresent()) {
+            if (user.getUserRole().equals(UserRole.USER)){
+                new MainMenu().showSubMenu(new UserMenu(), user);
+            } else {
+                new MainMenu().showSubMenu(new AdminMenu(), user);
+            }
         } else {
-            System.out.println("Wrong username/pasword");
+            System.out.println("Error! Wrong Login or password.");
             show();
         }
     }
 
-    private void registerSubMenu(Scanner scanner) {
-        show(); //todo add impl
+    @Override
+    public void back () {
+        exitProgram();
     }
 }
