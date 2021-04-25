@@ -48,7 +48,7 @@ public class UserDaoImpl implements UserDao {
     @Override
     public User getByUsernameAndPassword(String username, String password) {
         return HomeDB.getUsersDB().stream()
-                .filter(user -> user.getUsername().equals(username) && user.getPassword().equals(password))
+                .filter(user -> user.getUserName().equals(username) && user.getPassword().equals(password))
                 .findFirst()
                 .orElse(null);
     }
