@@ -1,5 +1,6 @@
 package model;
 
+
 import java.util.ArrayList;
 
 public class User extends AbstractEntity {
@@ -8,11 +9,6 @@ public class User extends AbstractEntity {
     private boolean isBlocked;
     private UserRole role;
     private ArrayList<Order> order;
-
-    enum UserRole {
-        ADMIN,
-        CUSTOMER
-    }
 
     public void setOrder(ArrayList<Order> order) {
         this.order = order;
