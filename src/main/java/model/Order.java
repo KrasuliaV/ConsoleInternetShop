@@ -1,47 +1,58 @@
 package model;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Order extends AbstractEntity {
 
     private String ownerName;
+
+    private List<Product> products;
+
     private boolean isConfirmed;
-    private ArrayList<Product> product;
 
-
-    public void setConfirmed(boolean confirmed) {
-        isConfirmed = confirmed;
+    public Order() {
+        this.products = new ArrayList<>();
     }
 
-    public boolean isConfirmed() {
-        return isConfirmed;
-    }
-
-    public void setOwnerName(String ownerName) {
+    public Order(Long id, String ownerName, List<Product> products, boolean isConfirmed) {
+        super(id);
         this.ownerName = ownerName;
+        this.products = products;
+        this.isConfirmed = isConfirmed;
     }
 
     public String getOwnerName() {
         return ownerName;
     }
 
-
-    public void setProduct(ArrayList<Product> product) {
-        this.product = product;
+    public void setOwnerName(String ownerName) {
+        this.ownerName = ownerName;
     }
 
-    public ArrayList<Product> getProduct() {
-        return product;
+    public List<Product> getProducts() {
+        return products;
     }
 
+    public void setProducts(List<Product> products) {
+        this.products = products;
+    }
+
+    public boolean isConfirmed() {
+        return isConfirmed;
+    }
+
+    public void setConfirmed(boolean confirmed) {
+        isConfirmed = confirmed;
+    }
 
     @Override
-    public void setId(long id) {
-        super.setId(id);
-    }
-
-    @Override
-    public long getId() {
-        return super.getId();
+    public String toString() {
+        return "Order{" +
+                "id=" + id +
+                ", ownerName='" + ownerName + '\'' +
+                ", products=" + products +
+                ", isConfirmed=" + isConfirmed +
+                '}';
     }
 }
