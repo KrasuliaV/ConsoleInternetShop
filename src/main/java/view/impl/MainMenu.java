@@ -17,7 +17,7 @@ public class MainMenu implements Menu {
         while (true) {
             switch (scanner.next()) {
                 case "1":
-                    submenu.productsSubMenuShow();
+                    submenu.productsSubMenuShow(user);
                     break;
                 case "2":
                     submenu.ordersMenuShow(user);

@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface SubMenu extends Menu {
 
-    void productsSubMenuShow();
+    void productsSubMenuShow(User user);
 
     void ordersMenuShow(User user);
 
