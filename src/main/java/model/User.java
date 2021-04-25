@@ -7,15 +7,15 @@ public class User extends AbstractEntity {
     private String userName;
     private String password;
     private boolean isBlocked;
-    private UserRole role;
-    private ArrayList<Order> order;
+    private UserRole userRole;
+    private ArrayList<Order> orderList;
 
-    public void setOrder(ArrayList<Order> order) {
-        this.order = order;
+    public void setOrderList(ArrayList<Order> orderList) {
+        this.orderList = orderList;
     }
 
-    public ArrayList<Order> getOrder() {
-        return order;
+    public ArrayList<Order> getOrderList() {
+        return orderList;
     }
 
     public boolean isBlocked() {
@@ -42,12 +42,12 @@ public class User extends AbstractEntity {
         return userName;
     }
 
-    public UserRole getRole() {
-        return role;
+    public UserRole getUserRole() {
+        return userRole;
     }
 
-    public void setRole(UserRole role) {
-        this.role = role;
+    public void setUserRole(UserRole userRole) {
+        this.userRole = userRole;
     }
 
     @Override
