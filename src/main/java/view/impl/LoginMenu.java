@@ -9,6 +9,7 @@ import view.Menu;
 
 import java.util.Optional;
 import java.util.Scanner;
+import java.util.function.BiFunction;
 
 public class LoginMenu implements Menu {
 
@@ -18,22 +19,19 @@ public class LoginMenu implements Menu {
 
     public LoginMenu() {
         this.userService = new UserServiceImpl();
+        scanner = new Scanner(System.in);
     }
 
     public void show() {
         showItems(items);
 
-        scanner = new Scanner(System.in);
-
         while (true) {
-            String choice = scanner.next();
-
-            switch (choice) {
+            switch (scanner.next()) {
                 case "1":
-                    loginSubMenu(scanner);
+                    loginSubMenu();
                     break;
                 case "2":
-                    registerSubMenu(scanner);
+                    registerSubMenu();
                     break;
                 case "0":
                     exit();
@@ -49,14 +47,8 @@ public class LoginMenu implements Menu {
         System.exit(1);
     }
 
-    private void loginSubMenu(Scanner scanner) {
-        System.out.println("input login:");
-        String login = scanner.next();
-
-        System.out.println("input password:");
-        String password = scanner.next();
-
-        User user = userService.login(login, password);
+    private void loginSubMenu() {
+        User user = getUser(userService::login);
         if (Optional.ofNullable(user).isPresent()) {
             if (user.getUserRole().equals(UserRole.CUSTOMER)) {
                 new MainMenu().showSubMenu(new UserMenu(), user);
@@ -67,13 +59,17 @@ public class LoginMenu implements Menu {
         }
     }
 
-    private void registerSubMenu(Scanner scanner) {
+    private void registerSubMenu() {
+        User user = getUser(userService::register);
+        new MainMenu().showSubMenu(new UserMenu(), user);
+    }
+
+    private User getUser(BiFunction<String, String, User> method) {
         System.out.println("input login:");
         String login = scanner.next();
 
         System.out.println("input password:");
         String password = scanner.next();
-        User user = userService.register(login, password);
-        new MainMenu().showSubMenu(new UserMenu(), user);
+        return method.apply(login, password);
     }
 }
