@@ -1,13 +1,20 @@
 package model;
 
-public class AbstractEntity {
-    private long id;
+public abstract class AbstractEntity {
+    protected Long id;
 
-    public void setId(long id) {
+    protected AbstractEntity() {
+    }
+
+    protected AbstractEntity(Long id) {
         this.id = id;
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 }

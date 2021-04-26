@@ -1,32 +1,62 @@
 package model;
 
-public class Product extends AbstractEntity {
-    private String productName;
-    private double price;
+import java.math.BigDecimal;
+import java.util.Objects;
 
-    public void setPrice(double price) {
-        this.price = price;
+public class Product extends AbstractEntity {
+
+    private String name;
+
+    private BigDecimal price;
+
+    public Product(String name, double price) {
+        this.name = name;
+        this.price = BigDecimal.valueOf(price);
     }
 
-    public double getPrice() {
+    public Product(Long id, String name, double price) {
+        super(id);
+        this.name = name;
+        this.price = BigDecimal.valueOf(price);
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public BigDecimal getPrice() {
         return price;
     }
 
-    public void setProductName(String productName) {
-        this.productName = productName;
-    }
-
-    public String getProductName() {
-        return productName;
+    public void setPrice(double price) {
+        this.price = BigDecimal.valueOf(price);
     }
 
     @Override
-    public void setId(long id) {
-        super.setId(id);
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        Product product = (Product) o;
+        return Objects.equals(name, product.name) && Objects.equals(price, product.price);
     }
 
     @Override
-    public long getId() {
-        return super.getId();
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), name, price);
+    }
+
+
+    @Override
+    public String toString() {
+        return "Product{" +
+                "id=" + id +
+                ", name=" + name +
+                ", price=" + price +
+                '}';
     }
 }

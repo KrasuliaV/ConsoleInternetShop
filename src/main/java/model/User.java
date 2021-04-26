@@ -1,25 +1,68 @@
 package model;
 
+
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 public class User extends AbstractEntity {
     private String userName;
+
     private String password;
+
     private boolean isBlocked;
-    private UserRole role;
-    private ArrayList<Order> order;
 
-    enum UserRole {
-        ADMIN,
-        CUSTOMER
+    private UserRole userRole;
+
+    private List<Order> orderList;
+
+    private List<String> massageList;
+
+    public User() {
     }
 
-    public void setOrder(ArrayList<Order> order) {
-        this.order = order;
+    public User(String username, String password) {
+        this.userName = username;
+        this.password = password;
+        this.isBlocked = false;
+        this.userRole = UserRole.CUSTOMER;
+        this.orderList = new ArrayList<>();
+        this.massageList = new ArrayList<>();
     }
 
-    public ArrayList<Order> getOrder() {
-        return order;
+    public User(String username, String password, boolean isBlocked, UserRole userRole, List<Order> orderList, List<String> massageList) {
+        this.userName = username;
+        this.password = password;
+        this.isBlocked = isBlocked;
+        this.userRole = userRole;
+        this.orderList = orderList;
+        this.massageList = massageList;
+    }
+
+    public User(Long id, String username, String password, boolean isBlocked, UserRole userRole, List<Order> orderList, List<String> massageList) {
+        super(id);
+        this.userName = username;
+        this.password = password;
+        this.isBlocked = isBlocked;
+        this.userRole = userRole;
+        this.orderList = orderList;
+        this.massageList = massageList;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public boolean isBlocked() {
@@ -30,37 +73,41 @@ public class User extends AbstractEntity {
         isBlocked = blocked;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public UserRole getUserRole() {
+        return userRole;
     }
 
-    public String getPassword() {
-        return password;
+    public void setUserRole(UserRole userRole) {
+        this.userRole = userRole;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public List<Order> getOrderList() {
+        return orderList;
     }
 
-    public String getUserName() {
-        return userName;
+    public void setOrderList(List<Order> orderList) {
+        this.orderList = orderList;
     }
 
-    public UserRole getRole() {
-        return role;
+    public List<String> getMassageList() {
+        return massageList;
     }
 
-    public void setRole(UserRole role) {
-        this.role = role;
-    }
-
-    @Override
-    public void setId(long id) {
-        super.setId(id);
+    public void setMassageList(List<String> massageList) {
+        this.massageList = massageList;
     }
 
     @Override
-    public long getId() {
-        return super.getId();
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        User user = (User) o;
+        return isBlocked == user.isBlocked && Objects.equals(userName, user.userName) && Objects.equals(password, user.password) && userRole == user.userRole && Objects.equals(orderList, user.orderList) && Objects.equals(massageList, user.massageList);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), userName, password, isBlocked, userRole, orderList, massageList);
     }
 }
