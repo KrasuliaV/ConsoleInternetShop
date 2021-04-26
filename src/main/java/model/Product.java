@@ -50,13 +50,8 @@ public class Product extends AbstractEntity {
         return Objects.hash(super.hashCode(), name, price);
     }
 
-
     @Override
     public String toString() {
-        return "Product{" +
-                "id=" + id +
-                ", name=" + name +
-                ", price=" + price +
-                '}';
+        return name + ", price=" + price;
     }
 }

@@ -2,6 +2,8 @@ package model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class Order extends AbstractEntity {
 
@@ -46,12 +48,16 @@ public class Order extends AbstractEntity {
         isConfirmed = confirmed;
     }
 
+    private Map<String, Long> getRightProductList() {
+        return products.stream()
+                .collect(Collectors.groupingBy(Product::getName, Collectors.counting()));
+    }
+
     @Override
     public String toString() {
         return "Order{" +
-                "id=" + id +
-                ", ownerName='" + ownerName + '\'' +
-                ", products=" + products +
+                " ownerName='" + ownerName + '\'' +
+                ", products=" + getRightProductList() +
                 ", isConfirmed=" + isConfirmed +
                 '}';
     }

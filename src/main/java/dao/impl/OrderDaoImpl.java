@@ -67,7 +67,7 @@ public class OrderDaoImpl implements OrderDao {
 
     private User getUserByOrderOwner(Order order) {
         return HomeDB.getUsersDB().stream()
-                .filter(user -> user.getUsername().equals(order.getOwnerName()))
+                .filter(user -> user.getUserName().equals(order.getOwnerName()))
                 .findFirst()
                 .orElse(null);
     }
