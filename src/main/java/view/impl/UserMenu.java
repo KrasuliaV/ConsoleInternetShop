@@ -84,28 +84,37 @@ public class UserMenu implements SubMenu {
 
     private void productChooserMenu(User user) {
         checkOrderForExistence();
-        System.out.println("Enter product number or B(for go to Bucket) or E(for exit from shop)");
-        showProductList(productService.getAllProductList());
-        String choice = scanner.next().toUpperCase(Locale.ROOT);
-        switch (choice) {
-            case "B":
-                checkoutOrder(user);
-                break;
-            case "E":
-                exit();
-                break;
-            default:
-                if (orderService.addProductToBucket(order, choice)) {
-                    productChooserMenu(user);
-                }
-                System.out.println(ENTER_RIGHT_OPERATION);
-                productChooserMenu(user);
+        int pageCounter = 1;
+        List<Product> allProductList = productService.getAllProductList();
+        while (true) {
+            System.out.println(" - enter product number\n - N(for go to next prod. page)\n - B(for go to Bucket)\n - E(for exit from shop)");
+            showProductPage(getProductPage(allProductList, pageCounter, 2));
+            String choice = scanner.next().toUpperCase(Locale.ROOT);
+            switch (choice) {
+                case "B":
+                    pageCounter = 1;
+                    checkoutOrder(user);
+                    break;
+                case "N":
+                    pageCounter++;
+                    pageCounter = getPageNumbers(2, allProductList.size()) >= pageCounter ? pageCounter : 1;
+                    showProductPage(getProductPage(allProductList, pageCounter, 2));
+                    break;
+                case "E":
+                    exit();
+                    break;
+                default:
+                    if (orderService.addProductToBucket(order, choice)) {
+                        productChooserMenu(user);
+                    }
+                    System.out.println(ENTER_RIGHT_OPERATION);
+            }
         }
     }
 
     private void searchingMenu(User user) {
         checkOrderForExistence();
-        System.out.println("Enter product name or or B(for go to Bucket) or C(for choose product) or E(for exit from shop) ");
+        System.out.println("Enter product name or B(for go to Bucket) or C(for choose product) or E(for exit from shop) ");
         while (true) {
             String choice = scanner.next().toUpperCase(Locale.ROOT);
             switch (choice) {
@@ -142,13 +151,13 @@ public class UserMenu implements SubMenu {
             System.out.println(EMPTY_BUCKET);
             productsSubMenuShow(user);
         } else {
-            showProductList(products);
+            showProductPage(products);
             confirmationChooser(user);
         }
     }
 
     private void confirmationChooser(User user) {
-        System.out.println("Choose operation: Y(confirm order) or C(for choose product) or S(search product) or E(for exit from shop)");
+        System.out.println("Choose operation: Y(confirm order) or C(for choose product) or E(for exit from shop)");
         while (true) {
             switch (scanner.next().toUpperCase()) {
                 case "Y":
@@ -175,4 +184,5 @@ public class UserMenu implements SubMenu {
     private void checkOrderForExistence() {
         if (order == null) order = new Order();
     }
+
 }

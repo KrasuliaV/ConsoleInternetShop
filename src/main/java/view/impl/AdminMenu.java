@@ -11,6 +11,7 @@ import service.impl.UserServiceImpl;
 import view.SubMenu;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.Scanner;
 
@@ -53,9 +54,9 @@ public class AdminMenu implements SubMenu {
     @Override
     public void ordersMenuShow(User user) {
         System.out.println(orderService.getAllOrders());
-        System.out.println("Enter order number for changeStatus or B(for back to last menu)");
         while (true) {
-            String choice = scanner.next();
+            System.out.println("Enter order number for changeStatus or B(for back to last menu)");
+            String choice = scanner.next().toUpperCase(Locale.ROOT);
             switch (choice) {
                 case "B":
                     new MainMenu().showSubMenu(this, user);
@@ -118,13 +119,19 @@ public class AdminMenu implements SubMenu {
     }
 
     private void editProduct(User user) {
-        System.out.println("Enter product number or A(for add new product) or B(for back to last menu)");
-        showProductList(productService.getAllProductList());
+        int pageCounter = 1;
+        List<Product> allProductList = productService.getAllProductList();
         while (true) {
-            String choice = scanner.next();
-            switch (choice) {
+            System.out.println("Enter product number or N(for go to next prod. page) or A(for add new product) or B(for back to last menu)");
+            showProductPage(getProductPage(allProductList, pageCounter, 2));
+            switch (scanner.next().toUpperCase(Locale.ROOT)) {
                 case "A":
                     addProductMenu(user);
+                    break;
+                case "N":
+                    pageCounter++;
+                    pageCounter = getPageNumbers(2, allProductList.size()) >= pageCounter ? pageCounter : 1;
+                    showProductPage(getProductPage(allProductList, pageCounter, 2));
                     break;
                 case "B":
                     productsSubMenuShow(user);

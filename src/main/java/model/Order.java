@@ -55,8 +55,8 @@ public class Order extends AbstractEntity {
 
     @Override
     public String toString() {
-        return "Order{" +
-                " ownerName='" + ownerName + '\'' +
+        return "Order{ id:" + id +
+                ", ownerName='" + ownerName + '\'' +
                 ", products=" + getRightProductList() +
                 ", isConfirmed=" + isConfirmed +
                 '}';

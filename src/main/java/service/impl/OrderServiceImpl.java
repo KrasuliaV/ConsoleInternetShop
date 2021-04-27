@@ -23,10 +23,14 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public boolean addProductToBucket(Order order, String productId) {
-        Product product = productDao.getById(Long.parseLong(productId));
-        if (product != null) {
-            order.getProducts().add(product);
-            return true;
+        if (productId.matches("\\d")) {
+            Product product = productDao.getById(Long.parseLong(productId));
+            if (product != null) {
+                order.getProducts().add(product);
+                return true;
+            } else {
+                return false;
+            }
         } else {
             return false;
         }
