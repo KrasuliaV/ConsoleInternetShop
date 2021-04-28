@@ -15,8 +15,7 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public User create(User user) {
-        userId++;
-        user.setId(userId);
+        user.setId(++userId);
         HomeDB.getUsersDB().add(user);
         return user;
     }

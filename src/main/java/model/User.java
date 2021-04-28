@@ -110,4 +110,14 @@ public class User extends AbstractEntity {
     public int hashCode() {
         return Objects.hash(super.hashCode(), userName, password, isBlocked, userRole, orderList, massageList);
     }
+
+    @Override
+    public String toString() {
+        return userName +
+                "{id=" + id +
+                ", isBlocked=" + isBlocked +
+                ", orderList=" + orderList +
+                ", massageList=" + massageList +
+                "}\n";
+    }
 }

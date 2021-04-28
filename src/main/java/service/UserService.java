@@ -2,6 +2,8 @@ package service;
 
 import model.User;
 
+import java.util.List;
+
 public interface UserService {
 
     /**
@@ -18,4 +20,8 @@ public interface UserService {
     void sendMessageToManager(User user, String message);
 
     void sendMessageToClient(String userId, String message);
+
+    List<User> getAllUserNotAdmin();
+
+    boolean changeStatus(String choiceUserId);
 }

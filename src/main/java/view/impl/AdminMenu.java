@@ -17,6 +17,8 @@ import java.util.Scanner;
 
 public class AdminMenu implements SubMenu {
 
+    public static final String ENTER_RIGHT_OPERATION = "Enter right operation";
+
     private final ProductService productService;
     private final OrderService orderService;
     private final UserService userService;
@@ -34,8 +36,7 @@ public class AdminMenu implements SubMenu {
         String[] productItems = {"1.Edit existing product", "2.Add new product", "0.Exit"};
         showItems(productItems);
         while (true) {
-            String choice = scanner.next();
-            switch (choice) {
+            switch (scanner.next()) {
                 case "1":
                     editProduct(user);
                     break;
@@ -46,7 +47,7 @@ public class AdminMenu implements SubMenu {
                     exit();
                     break;
                 default:
-                    System.out.println("Enter right operation number");
+                    System.out.println(ENTER_RIGHT_OPERATION);
             }
         }
     }
@@ -63,7 +64,7 @@ public class AdminMenu implements SubMenu {
                     break;
                 default:
                     if (!orderService.changeStatus(choice)) {
-                        System.out.println("Enter right status number");
+                        System.out.println(ENTER_RIGHT_OPERATION);
                     }
             }
         }
@@ -71,6 +72,44 @@ public class AdminMenu implements SubMenu {
 
     @Override
     public void usersMenuShow(User user) {
+        String[] productItems = {"1.Change user status", "2.Message from client", "0.Exit"};
+        showItems(productItems);
+        while (true) {
+            switch (scanner.next()) {
+                case "1":
+                    changeUserStatus(user);
+                    break;
+                case "2":
+                    checkMessage(user);
+                    break;
+                case "0":
+                    exit();
+                    break;
+                default:
+                    System.out.println(ENTER_RIGHT_OPERATION);
+            }
+        }
+    }
+
+    private void changeUserStatus(User user) {
+        System.out.println(userService.getAllUserNotAdmin());
+        while (true) {
+            System.out.println("Enter user id for change Status or B(for back to last menu)");
+            String choice = scanner.next().toUpperCase(Locale.ROOT);
+            switch (choice) {
+                case "B":
+                    new MainMenu().showSubMenu(this, user);
+                    break;
+                default:
+                    if (!userService.changeStatus(choice)) {
+                        System.out.println(ENTER_RIGHT_OPERATION);
+                    }
+            }
+        }
+
+    }
+
+    private void checkMessage(User user) {
         List<String> messageList = user.getMassageList();
         if (messageList.isEmpty()) {
             System.out.println("You don't have some message from client");
@@ -123,23 +162,23 @@ public class AdminMenu implements SubMenu {
         List<Product> allProductList = productService.getAllProductList();
         while (true) {
             System.out.println("Enter product number or N(for go to next prod. page) or A(for add new product) or B(for back to last menu)");
-            showProductPage(getProductPage(allProductList, pageCounter, 2));
-            switch (scanner.next().toUpperCase(Locale.ROOT)) {
+            showProductPage(getPage(allProductList, pageCounter, 2));
+            String choice = scanner.next().toUpperCase(Locale.ROOT);
+            switch (choice) {
                 case "A":
                     addProductMenu(user);
                     break;
                 case "N":
                     pageCounter++;
                     pageCounter = getPageNumbers(2, allProductList.size()) >= pageCounter ? pageCounter : 1;
-                    showProductPage(getProductPage(allProductList, pageCounter, 2));
                     break;
                 case "B":
                     productsSubMenuShow(user);
                     break;
                 default:
-                    Optional.ofNullable(productService.getProductById(scanner.next()))
+                    Optional.ofNullable(productService.getProductById(choice))
                             .ifPresentOrElse((product -> makeChangeToProduct(product, user)),
-                                    () -> System.out.println("Enter right operation letter"));
+                                    () -> System.out.println(ENTER_RIGHT_OPERATION));
             }
         }
     }
@@ -147,41 +186,35 @@ public class AdminMenu implements SubMenu {
     private void makeChangeToProduct(Product product, User user) {
         System.out.println("Enter what you want to change N(for name change) or P(for price change) or B(for back to last menu)");
         while (true) {
-            String choice = scanner.next();
-            switch (choice) {
+            switch (scanner.next().toUpperCase(Locale.ROOT)) {
                 case "N":
                     changeProductName(product);
-                    makeChangeToProduct(product, user);
+                    productsSubMenuShow(user);
                     break;
                 case "P":
                     changeProductPrice(product);
-
+                    productsSubMenuShow(user);
                     break;
                 case "B":
                     editProduct(user);
                     break;
                 default:
-                    System.out.println("Enter right operation letter");
+                    System.out.println(ENTER_RIGHT_OPERATION);
                     makeChangeToProduct(product, user);
             }
         }
 
     }
 
-    private void changeProductPrice(Product product) {
+    private void changeProductName(Product product) {
         System.out.println("Enter new product name");
         productService.setNewName(product, scanner.next());
     }
 
-    private void changeProductName(Product product) {
+    private void changeProductPrice(Product product) {
         System.out.println("Enter new product price");
-        String newPrice = scanner.next();
-        if (newPrice.matches("[\\d.\\d]+")) {
-            productService.setNewPrice(product, newPrice);
-        } else {
-            System.out.println("Enter right price");
-            changeProductName(product);
-        }
+        String newPrice = getRightPrice(scanner.next());
+        productService.setNewPrice(product, newPrice);
     }
 
     private void addProductMenu(User user) {
@@ -189,10 +222,18 @@ public class AdminMenu implements SubMenu {
         String name = scanner.next();
 
         System.out.println("Enter product price:");
-        String price = scanner.next();
-
+        String price = getRightPrice(scanner.next());
         productService.createProduct(name, price);
         productsSubMenuShow(user);
+    }
+
+    private String getRightPrice(String price) {
+        if (price.matches("[\\d.\\d]+")) {
+            return price;
+        } else {
+            System.out.println("Enter right price");
+            return getRightPrice(scanner.next());
+        }
     }
 
     @Override

@@ -8,12 +8,11 @@ import java.util.List;
 
 public class ProductDaoImpl implements ProductDao {
 
-    private static long productId = 3;
+    private static long productId = 5;
 
     @Override
     public Product create(Product product) {
-        productId++;
-        product.setId(productId);
+        product.setId(++productId);
         HomeDB.getProductDB().add(product);
         return product;
     }

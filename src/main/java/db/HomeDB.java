@@ -16,14 +16,16 @@ public class HomeDB {
         Product banana = new Product(1L, "Banana", 32.59);
         Product apple = new Product(2L, "Apple", 22.74);
         Product honey = new Product(3L, "Honey", 150.21);
+        Product whisky = new Product(4L, "Whisky", 1050.71);
+        Product coffee = new Product(5L, "Coffee", 101.53);
         Order firstOrder = new Order(1L, "goga", new ArrayList<>(List.of(banana, honey)), true);
         Order secondOrder = new Order(2L, "tosha", new ArrayList<>(List.of(apple, honey)), true);
         Order thirdOrder = new Order(3L, "glavniy", new ArrayList<>(List.of(banana, apple)), true);
-        productDB = new ArrayList<>(List.of(banana, apple, honey));
+        productDB = new ArrayList<>(List.of(banana, apple, honey, whisky, coffee));
         usersDB = new ArrayList<>(
                 List.of(new User(1L, "goga", "granata", false,
                                 UserRole.CUSTOMER, new ArrayList<>(List.of(firstOrder)), new ArrayList<>()),
-                        new User(2L, "tosha", "pernatiy", false,
+                        new User(2L, "tosha", "pernatiy", true,
                                 UserRole.CUSTOMER, new ArrayList<>(List.of(secondOrder)), new ArrayList<>()),
                         new User(3L, "glavniy", "pahan", false,
                                 UserRole.ADMIN, new ArrayList<>(List.of(thirdOrder)), new ArrayList<>())));

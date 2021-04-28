@@ -14,8 +14,7 @@ public class OrderDaoImpl implements OrderDao {
 
     @Override
     public Order create(Order order) {
-        orderId++;
-        order.setId(orderId);
+        order.setId(++orderId);
         getUserByOrderOwner(order).getOrderList().add(order);
         return order;
     }

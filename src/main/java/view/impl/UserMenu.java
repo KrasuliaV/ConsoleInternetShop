@@ -88,7 +88,7 @@ public class UserMenu implements SubMenu {
         List<Product> allProductList = productService.getAllProductList();
         while (true) {
             System.out.println(" - enter product number\n - N(for go to next prod. page)\n - B(for go to Bucket)\n - E(for exit from shop)");
-            showProductPage(getProductPage(allProductList, pageCounter, 2));
+            showProductPage(getPage(allProductList, pageCounter, 2));
             String choice = scanner.next().toUpperCase(Locale.ROOT);
             switch (choice) {
                 case "B":
@@ -98,7 +98,6 @@ public class UserMenu implements SubMenu {
                 case "N":
                     pageCounter++;
                     pageCounter = getPageNumbers(2, allProductList.size()) >= pageCounter ? pageCounter : 1;
-                    showProductPage(getProductPage(allProductList, pageCounter, 2));
                     break;
                 case "E":
                     exit();

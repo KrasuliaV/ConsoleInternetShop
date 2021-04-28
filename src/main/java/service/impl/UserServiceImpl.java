@@ -8,6 +8,7 @@ import service.UserService;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class UserServiceImpl implements UserService {
 
@@ -45,5 +46,27 @@ public class UserServiceImpl implements UserService {
         User client = userDao.getById(Long.parseLong(clientId));
         client.getMassageList().add(message);
         userDao.update(client);
+    }
+
+    @Override
+    public List<User> getAllUserNotAdmin() {
+        return userDao.getAll().stream()
+                .filter(user -> user.getUserRole().equals(UserRole.CUSTOMER))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public boolean changeStatus(String choiceUserId) {
+        if (choiceUserId.matches("[\\d]+")) {
+            User user = userDao.getById(Long.parseLong(choiceUserId));
+            if (user != null) {
+                user.setBlocked(!user.isBlocked());
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
     }
 }
