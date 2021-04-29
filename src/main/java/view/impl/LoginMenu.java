@@ -6,6 +6,7 @@ import model.UserRole;
 import service.UserService;
 import service.impl.UserServiceImpl;
 import view.Menu;
+import view.style.ConsoleColors;
 
 import java.util.Optional;
 import java.util.Scanner;
@@ -44,6 +45,7 @@ public class LoginMenu implements Menu {
 
     @Override
     public void exit() {
+        System.out.printf("%sGoodbye, my dear friend.%n We will be waiting for you next time!!!", ConsoleColors.YELLOW_BOLD.getColorCode());
         System.exit(1);
     }
 
@@ -54,7 +56,7 @@ public class LoginMenu implements Menu {
                 new MainMenu().showSubMenu(new UserMenu(), user);
             } else new MainMenu().showSubMenu(new AdminMenu(), user);
         } else {
-            System.out.println("Wrong username/password");
+            System.out.printf("%sWrong username/password%s%n", ConsoleColors.RED.getColorCode(), ConsoleColors.RESET.getColorCode());
             show();
         }
     }
