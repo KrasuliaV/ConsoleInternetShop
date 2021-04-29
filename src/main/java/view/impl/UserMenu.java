@@ -3,9 +3,11 @@ package view.impl;
 import model.Order;
 import model.Product;
 import model.User;
+import service.ChatService;
 import service.OrderService;
 import service.ProductService;
 import service.UserService;
+import service.impl.ChatServiceImpl;
 import service.impl.OrderServiceImpl;
 import service.impl.ProductServiceImpl;
 import service.impl.UserServiceImpl;
@@ -23,6 +25,7 @@ public class UserMenu implements SubMenu {
     private final UserService userService;
     private final ProductService productService;
     private final OrderService orderService;
+    private final ChatService chatService;
 
     private final Scanner scanner;
     Order order;
@@ -31,6 +34,7 @@ public class UserMenu implements SubMenu {
         this.userService = new UserServiceImpl();
         this.productService = new ProductServiceImpl();
         this.orderService = new OrderServiceImpl();
+        this.chatService = new ChatServiceImpl();
         scanner = new Scanner(System.in);
     }
 
@@ -73,11 +77,12 @@ public class UserMenu implements SubMenu {
 
     @Override
     public void usersMenuShow(User user) {
-        if (!user.getMassageList().isEmpty()) {
-            System.out.println(user.getMassageList());
+        List<String> massageByClientId = chatService.getMassageByClientId(user.getId());
+        if (!massageByClientId.isEmpty()) {
+            System.out.println(massageByClientId);
         }
-        System.out.println("Enter tour question to manager:");
-        userService.sendMessageToManager(user, scanner.next());
+        System.out.println("Enter your question to manager:");
+        chatService.sendMessageToManager(user, scanner.nextLine());
         System.out.println("Your message was sent to the manager");
         new MainMenu().showSubMenu(this, user);
     }
@@ -177,6 +182,7 @@ public class UserMenu implements SubMenu {
 
     @Override
     public void exit() {
+        scanner.close();
         new LoginMenu().show();
     }
 

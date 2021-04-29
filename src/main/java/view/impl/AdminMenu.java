@@ -1,10 +1,13 @@
 package view.impl;
 
+import model.ChatPM;
 import model.Product;
 import model.User;
+import service.ChatService;
 import service.OrderService;
 import service.ProductService;
 import service.UserService;
+import service.impl.ChatServiceImpl;
 import service.impl.OrderServiceImpl;
 import service.impl.ProductServiceImpl;
 import service.impl.UserServiceImpl;
@@ -14,6 +17,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.Scanner;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 public class AdminMenu implements SubMenu {
 
@@ -22,12 +27,14 @@ public class AdminMenu implements SubMenu {
     private final ProductService productService;
     private final OrderService orderService;
     private final UserService userService;
+    private final ChatService chatService;
     private final Scanner scanner;
 
     public AdminMenu() {
         this.productService = new ProductServiceImpl();
         this.orderService = new OrderServiceImpl();
         this.userService = new UserServiceImpl();
+        this.chatService = new ChatServiceImpl();
         this.scanner = new Scanner(System.in);
     }
 
@@ -54,25 +61,12 @@ public class AdminMenu implements SubMenu {
 
     @Override
     public void ordersMenuShow(User user) {
-        System.out.println(orderService.getAllOrders());
-        while (true) {
-            System.out.println("Enter order number for changeStatus or B(for back to last menu)");
-            String choice = scanner.next().toUpperCase(Locale.ROOT);
-            switch (choice) {
-                case "B":
-                    new MainMenu().showSubMenu(this, user);
-                    break;
-                default:
-                    if (!orderService.changeStatus(choice)) {
-                        System.out.println(ENTER_RIGHT_OPERATION);
-                    }
-            }
-        }
+        changeStatus(orderService::getAllOrders, orderService::changeStatus, "order", user);
     }
 
     @Override
     public void usersMenuShow(User user) {
-        String[] productItems = {"1.Change user status", "2.Message from client", "0.Exit"};
+        String[] productItems = {"1.Change user status", "2.Message from customer", "0.Exit"};
         showItems(productItems);
         while (true) {
             switch (scanner.next()) {
@@ -92,69 +86,88 @@ public class AdminMenu implements SubMenu {
     }
 
     private void changeUserStatus(User user) {
-        System.out.println(userService.getAllUserNotAdmin());
+        changeStatus(userService::getAllUserNotAdmin, userService::changeStatus, "user", user);
+    }
+
+    private <T> void changeStatus(Supplier<List<T>> supplier, Predicate<String> predicate, String model, User user) {
+        supplier.get().forEach(System.out::println);
         while (true) {
-            System.out.println("Enter user id for change Status or B(for back to last menu)");
+            System.out.printf("Enter %s id for changeStatus or B(for back to last menu)%n", model);
             String choice = scanner.next().toUpperCase(Locale.ROOT);
             switch (choice) {
                 case "B":
                     new MainMenu().showSubMenu(this, user);
                     break;
                 default:
-                    if (!userService.changeStatus(choice)) {
+                    if (!predicate.test(choice)) {
                         System.out.println(ENTER_RIGHT_OPERATION);
+                    } else {
+                        new MainMenu().showSubMenu(this, user);
                     }
             }
         }
-
     }
 
     private void checkMessage(User user) {
-        List<String> messageList = user.getMassageList();
-        if (messageList.isEmpty()) {
-            System.out.println("You don't have some message from client");
+        List<ChatPM> chatsWithoutAnswer = chatService.getChatsWithoutAnswer();
+        if (chatsWithoutAnswer.isEmpty()) {
+            System.out.println("Shop doesn't have some message without answer");
             new MainMenu().showSubMenu(this, user);
         } else {
-            System.out.println(messageList);
-            chooserMessageAndAnswering(user, messageList);
+            showListWithMessagesInformation(chatsWithoutAnswer);
+            chooserMessageAndAnswering(user, chatsWithoutAnswer);
         }
     }
 
-    private void chooserMessageAndAnswering(User user, List<String> messageList) {
-        if (messageList.size() == 1) {
-            System.out.println("Enter answer for client");
-            userService.sendMessageToClient(getUserIdFromMessageString(messageList.get(0)), scanner.next());
-        } else {
-            System.out.println("Enter user id for choose message");
-            String enteringUserId = scanner.next();
-            getClientId(messageList, enteringUserId)
-                    .ifPresentOrElse(clientId -> chatWithOneClient(clientId, messageList),
-                            () -> inputWrongAnswerAndReturnedToThisMenu(user)
-                    );
-        }
-    }
-
-    private String getUserIdFromMessageString(String message) {
-        return message.split(" ", 2)[0];
-    }
-
-    private void inputWrongAnswerAndReturnedToThisMenu(User user) {
-        System.out.println("You enter wrong id number");
-        usersMenuShow(user);
-    }
-
-    private Optional<String> getClientId(List<String> messageList, String clientId) {
-        return messageList.stream()
-                .map(this::getUserIdFromMessageString)
-                .filter(messageId -> messageId.equals(clientId))
-                .findFirst();
-    }
-
-    private void chatWithOneClient(String clientId, List<String> messageList) {
-        messageList.stream()
-                .filter(message -> getUserIdFromMessageString(message).equals(clientId))
+    private void showListWithMessagesInformation(List<ChatPM> chatsWithoutAnswer) {
+        chatsWithoutAnswer.stream()
+                .map(chatPM -> chatPM.getCustomerName() + " id:" + chatPM.getCustomerId())
                 .forEach(System.out::println);
-        userService.sendMessageToClient(clientId, scanner.next());
+    }
+
+    private void chooserMessageAndAnswering(User user, List<ChatPM> chatsWithoutAnswer) {
+        if (chatsWithoutAnswer.size() == 1) {
+            ChatPM chatPM = chatsWithoutAnswer.get(0);
+            chatWithCustomer(chatPM, user);
+        } else {
+            chatChooser(user, chatsWithoutAnswer);
+        }
+    }
+
+    private void chatChooser(User user, List<ChatPM> chatsWithoutAnswer) {
+        System.out.println("Enter user id for choose chat");
+        String enteringUserId = scanner.next();
+        if (enteringUserId.matches("[\\d]+")) {
+            ChatPM chatPM = getChatByCustomerId(enteringUserId, chatsWithoutAnswer);
+            answeringToCustomer(user, chatsWithoutAnswer, chatPM);
+        } else {
+            chatChooser(user, chatsWithoutAnswer);
+        }
+    }
+
+    private void answeringToCustomer(User user, List<ChatPM> chatsWithoutAnswer, ChatPM chatPM) {
+        if (chatPM.getMessageList().isEmpty()) {
+            System.out.println("You enter incorrect user id");
+            chatChooser(user, chatsWithoutAnswer);
+        } else {
+            chatWithCustomer(chatPM, user);
+        }
+    }
+
+    private void chatWithCustomer(ChatPM chatPM, User user) {
+        System.out.println(chatPM.getMessageList());
+        System.out.println("Enter answer for customer");
+        String answer = scanner.nextLine();
+        chatService.sendMessageToCustomer(chatPM, scanner.nextLine());
+        System.out.println("Your message was sent to the customer");
+        new MainMenu().showSubMenu(this, user);
+    }
+
+    private ChatPM getChatByCustomerId(String enteringUserId, List<ChatPM> chatsWithoutAnswer) {
+        return chatsWithoutAnswer.stream()
+                .filter(chat -> chat.getCustomerId() == Long.parseLong(enteringUserId))
+                .findFirst()
+                .orElse(new ChatPM());
     }
 
     private void editProduct(User user) {
@@ -208,7 +221,7 @@ public class AdminMenu implements SubMenu {
 
     private void changeProductName(Product product) {
         System.out.println("Enter new product name");
-        productService.setNewName(product, scanner.next());
+        productService.setNewName(product, scanner.nextLine());
     }
 
     private void changeProductPrice(Product product) {
@@ -219,7 +232,7 @@ public class AdminMenu implements SubMenu {
 
     private void addProductMenu(User user) {
         System.out.println("Enter product name:");
-        String name = scanner.next();
+        String name = scanner.nextLine();
 
         System.out.println("Enter product price:");
         String price = getRightPrice(scanner.next());

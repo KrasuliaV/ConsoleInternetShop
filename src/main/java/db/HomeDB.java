@@ -1,9 +1,6 @@
 package db;
 
-import model.Order;
-import model.Product;
-import model.User;
-import model.UserRole;
+import model.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,8 +8,10 @@ import java.util.List;
 public class HomeDB {
     private static ArrayList<Product> productDB;
     private static ArrayList<User> usersDB;
+    private static ArrayList<ChatPM> chatDB;
 
     static {
+        chatDB = new ArrayList<>();
         Product banana = new Product(1L, "Banana", 32.59);
         Product apple = new Product(2L, "Apple", 22.74);
         Product honey = new Product(3L, "Honey", 150.21);
@@ -24,18 +23,22 @@ public class HomeDB {
         productDB = new ArrayList<>(List.of(banana, apple, honey, whisky, coffee));
         usersDB = new ArrayList<>(
                 List.of(new User(1L, "goga", "granata", false,
-                                UserRole.CUSTOMER, new ArrayList<>(List.of(firstOrder)), new ArrayList<>()),
+                                UserRole.CUSTOMER, new ArrayList<>(List.of(firstOrder))),
                         new User(2L, "tosha", "pernatiy", true,
-                                UserRole.CUSTOMER, new ArrayList<>(List.of(secondOrder)), new ArrayList<>()),
+                                UserRole.CUSTOMER, new ArrayList<>(List.of(secondOrder))),
                         new User(3L, "glavniy", "pahan", false,
-                                UserRole.ADMIN, new ArrayList<>(List.of(thirdOrder)), new ArrayList<>())));
+                                UserRole.ADMIN, new ArrayList<>(List.of(thirdOrder)))));
     }
 
-    public static ArrayList<Product> getProductDB() {
+    public static List<Product> getProductDB() {
         return productDB;
     }
 
-    public static ArrayList<User> getUsersDB() {
+    public static List<User> getUsersDB() {
         return usersDB;
+    }
+
+    public static List<ChatPM> getChatDB() {
+        return chatDB;
     }
 }

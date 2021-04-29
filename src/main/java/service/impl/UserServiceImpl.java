@@ -6,9 +6,8 @@ import model.User;
 import model.UserRole;
 import service.UserService;
 
-import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
 public class UserServiceImpl implements UserService {
 
@@ -33,26 +32,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void sendMessageToManager(User user, String message) {
-        List<User> adminList = userDao.getUsersByRole(UserRole.ADMIN);
-        adminList.sort(Comparator.comparingInt(admin -> admin.getMassageList().size()));
-        User adminWithMinMessageList = adminList.get(0);
-        adminWithMinMessageList.getMassageList().add(user.getId() + " " + message);
-        userDao.update(adminWithMinMessageList);
-    }
-
-    @Override
-    public void sendMessageToClient(String clientId, String message) {
-        User client = userDao.getById(Long.parseLong(clientId));
-        client.getMassageList().add(message);
-        userDao.update(client);
-    }
-
-    @Override
     public List<User> getAllUserNotAdmin() {
-        return userDao.getAll().stream()
-                .filter(user -> user.getUserRole().equals(UserRole.CUSTOMER))
-                .collect(Collectors.toList());
+        return userDao.getUsersByRole(UserRole.CUSTOMER);
     }
 
     @Override
@@ -67,6 +48,16 @@ public class UserServiceImpl implements UserService {
             }
         } else {
             return false;
+        }
+    }
+
+    @Override
+    public User getUserById(String enteringUserId) {
+        if (enteringUserId.matches("[\\d]+")) {
+            return Optional.ofNullable(userDao.getById(Long.parseLong(enteringUserId)))
+                    .orElse(null);
+        } else {
+            return null;
         }
     }
 }

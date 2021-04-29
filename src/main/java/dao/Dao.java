@@ -12,7 +12,7 @@ public interface Dao<T extends AbstractEntity> {
 
     T delete(T t);
 
-    T update(T entity);
+    T update(T t);
 
     List<T> getAll();
 }

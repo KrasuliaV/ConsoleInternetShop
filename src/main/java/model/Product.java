@@ -56,9 +56,4 @@ public class Product extends AbstractEntity {
                 ": id=" + id +
                 ", price=" + price;
     }
-
-    //    @Override
-//    public String toString() {
-//        return name + ", price=" + price;
-//    }
 }

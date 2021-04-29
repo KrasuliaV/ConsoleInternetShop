@@ -16,9 +16,8 @@ public class User extends AbstractEntity {
 
     private List<Order> orderList;
 
-    private List<String> massageList;
-
     public User() {
+        orderList = new ArrayList<>();
     }
 
     public User(String username, String password) {
@@ -27,26 +26,15 @@ public class User extends AbstractEntity {
         this.isBlocked = false;
         this.userRole = UserRole.CUSTOMER;
         this.orderList = new ArrayList<>();
-        this.massageList = new ArrayList<>();
     }
 
-    public User(String username, String password, boolean isBlocked, UserRole userRole, List<Order> orderList, List<String> massageList) {
-        this.userName = username;
-        this.password = password;
-        this.isBlocked = isBlocked;
-        this.userRole = userRole;
-        this.orderList = orderList;
-        this.massageList = massageList;
-    }
-
-    public User(Long id, String username, String password, boolean isBlocked, UserRole userRole, List<Order> orderList, List<String> massageList) {
+    public User(Long id, String username, String password, boolean isBlocked, UserRole userRole, List<Order> orderList) {
         super(id);
         this.userName = username;
         this.password = password;
         this.isBlocked = isBlocked;
         this.userRole = userRole;
         this.orderList = orderList;
-        this.massageList = massageList;
     }
 
     public String getUserName() {
@@ -85,30 +73,18 @@ public class User extends AbstractEntity {
         return orderList;
     }
 
-    public void setOrderList(List<Order> orderList) {
-        this.orderList = orderList;
-    }
-
-    public List<String> getMassageList() {
-        return massageList;
-    }
-
-    public void setMassageList(List<String> massageList) {
-        this.massageList = massageList;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         User user = (User) o;
-        return isBlocked == user.isBlocked && Objects.equals(userName, user.userName) && Objects.equals(password, user.password) && userRole == user.userRole && Objects.equals(orderList, user.orderList) && Objects.equals(massageList, user.massageList);
+        return isBlocked == user.isBlocked && Objects.equals(userName, user.userName) && Objects.equals(password, user.password) && userRole == user.userRole && Objects.equals(orderList, user.orderList);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), userName, password, isBlocked, userRole, orderList, massageList);
+        return Objects.hash(super.hashCode(), userName, password, isBlocked, userRole, orderList);
     }
 
     @Override
@@ -117,7 +93,6 @@ public class User extends AbstractEntity {
                 "{id=" + id +
                 ", isBlocked=" + isBlocked +
                 ", orderList=" + orderList +
-                ", massageList=" + massageList +
-                "}\n";
+                '}';
     }
 }

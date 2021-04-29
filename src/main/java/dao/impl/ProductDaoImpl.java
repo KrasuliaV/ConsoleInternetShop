@@ -8,7 +8,7 @@ import java.util.List;
 
 public class ProductDaoImpl implements ProductDao {
 
-    private static long productId = 5;
+    private static Long productId = 5L;
 
     @Override
     public Product create(Product product) {
