@@ -10,12 +10,11 @@ import java.util.stream.Collectors;
 
 public class OrderDaoImpl implements OrderDao {
 
-    private static long orderId = 3;
+    private static Long orderId = 3L;
 
     @Override
     public Order create(Order order) {
-        orderId++;
-        order.setId(orderId);
+        order.setId(++orderId);
         getUserByOrderOwner(order).getOrderList().add(order);
         return order;
     }

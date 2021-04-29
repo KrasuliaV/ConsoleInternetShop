@@ -23,7 +23,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public boolean addProductToBucket(Order order, String productId) {
-        if (productId.matches("\\d")) {
+        if (productId.matches("[\\d]+")) {
             Product product = productDao.getById(Long.parseLong(productId));
             if (product != null) {
                 order.getProducts().add(product);

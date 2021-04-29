@@ -52,12 +52,25 @@ public class LoginMenu implements Menu {
     private void loginSubMenu() {
         User user = getUser(userService::login);
         if (Optional.ofNullable(user).isPresent()) {
-            if (user.getUserRole().equals(UserRole.CUSTOMER)) {
-                new MainMenu().showSubMenu(new UserMenu(), user);
-            } else new MainMenu().showSubMenu(new AdminMenu(), user);
+            checkUser(user);
         } else {
             System.out.printf("%sWrong username/password%s%n", ConsoleColors.RED.getColorCode(), ConsoleColors.RESET.getColorCode());
             show();
+        }
+    }
+
+    private void checkUser(User user) {
+        if (user.getUserRole().equals(UserRole.CUSTOMER)) {
+            checkBlockingUserStatus(user);
+        } else new MainMenu().showSubMenu(new AdminMenu(), user);
+    }
+
+    private void checkBlockingUserStatus(User user) {
+        if (user.isBlocked()) {
+            System.out.printf("%sYour account was blocked by admin!!!!%nYou can't use this shop%s%n", ConsoleColors.RED.getColorCode(), ConsoleColors.RESET.getColorCode());
+            show();
+        } else {
+            new MainMenu().showSubMenu(new UserMenu(), user);
         }
     }
 

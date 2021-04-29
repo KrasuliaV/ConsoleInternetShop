@@ -2,6 +2,8 @@ package service;
 
 import model.User;
 
+import java.util.List;
+
 public interface UserService {
 
     /**
@@ -15,7 +17,13 @@ public interface UserService {
 
     User register(String username, String password);
 
-    void sendMessageToManager(User user, String message);
+//    void sendMessageToManager(User user, String message);
 
-    void sendMessageToClient(String userId, String message);
+//    void sendMessageToClient(String userId, String message);
+
+    List<User> getAllUserNotAdmin();
+
+    boolean changeStatus(String choiceUserId);
+
+    User getUserById(String enteringUserId);
 }

@@ -23,9 +23,9 @@ public interface SubMenu extends Menu {
                 .forEach(System.out::println);
     }
 
-    default <T> List<T> getProductPage(List<T> products, int pageNumber, int numberElementsOnOnePage) {
-        return Optional.ofNullable(createPageMap(products, numberElementsOnOnePage).get(pageNumber))
-                .orElse(createPageMap(products, numberElementsOnOnePage).get(1));
+    default <T> List<T> getPage(List<T> someList, int pageNumber, int numberElementsOnOnePage) {
+        return Optional.ofNullable(createPageMap(someList, numberElementsOnOnePage).get(pageNumber))
+                .orElse(createPageMap(someList, numberElementsOnOnePage).get(1));
     }
 
     default int getPageNumbers(int numberElementOnOnePage, int productListSize) {
@@ -37,10 +37,10 @@ public interface SubMenu extends Menu {
         return IntStream.range(1, pageNumbers + 1)
                 .boxed()
                 .collect(Collectors.toMap(num -> num,
-                        num2 -> someList.subList(((num2 - 1) * elementInOnePage), numberChecker(someList, num2 - 1, elementInOnePage))));
+                        num2 -> someList.subList(((num2 - 1) * elementInOnePage), numberChecker(someList, num2 * elementInOnePage))));
     }
 
-    private <T> int numberChecker(List<T> someList, int number, int elementInOnePage) {
-        return Math.min((number + elementInOnePage), someList.size());
+    private <T> int numberChecker(List<T> someList, int number) {
+        return Math.min(number, someList.size());
     }
 }
