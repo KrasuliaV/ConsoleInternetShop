@@ -6,11 +6,9 @@ import model.User;
 import service.ChatService;
 import service.OrderService;
 import service.ProductService;
-import service.UserService;
 import service.impl.ChatServiceImpl;
 import service.impl.OrderServiceImpl;
 import service.impl.ProductServiceImpl;
-import service.impl.UserServiceImpl;
 import view.SubMenu;
 
 import java.util.List;
@@ -22,7 +20,6 @@ public class UserMenu implements SubMenu {
     public static final String ENTER_RIGHT_OPERATION = "Enter right operation";
     public static final String EMPTY_BUCKET = "You bucket is empty";
 
-    private final UserService userService;
     private final ProductService productService;
     private final OrderService orderService;
     private final ChatService chatService;
@@ -31,7 +28,6 @@ public class UserMenu implements SubMenu {
     Order order;
 
     public UserMenu() {
-        this.userService = new UserServiceImpl();
         this.productService = new ProductServiceImpl();
         this.orderService = new OrderServiceImpl();
         this.chatService = new ChatServiceImpl();
@@ -44,7 +40,7 @@ public class UserMenu implements SubMenu {
         String[] productItems = {"1.Choose product", "2.Search product", "3.Order checkout", "0.Exit"};
         showItems(productItems);
         while (true) {
-            String choice = scanner.next();
+            String choice = scanner.nextLine();
             switch (choice) {
                 case "1":
                     productChooserMenu(user);
@@ -94,7 +90,7 @@ public class UserMenu implements SubMenu {
         while (true) {
             System.out.println(" - enter product number\n - N(for go to next prod. page)\n - B(for go to Bucket)\n - E(for exit from shop)");
             showProductPage(getPage(allProductList, pageCounter, 2));
-            String choice = scanner.next().toUpperCase(Locale.ROOT);
+            String choice = scanner.nextLine().toUpperCase(Locale.ROOT);
             switch (choice) {
                 case "B":
                     pageCounter = 1;
@@ -120,7 +116,7 @@ public class UserMenu implements SubMenu {
         checkOrderForExistence();
         System.out.println("Enter product name or B(for go to Bucket) or C(for choose product) or E(for exit from shop) ");
         while (true) {
-            String choice = scanner.next().toUpperCase(Locale.ROOT);
+            String choice = scanner.nextLine().toUpperCase(Locale.ROOT);
             switch (choice) {
                 case "B":
                     checkoutOrder(user);
@@ -163,7 +159,7 @@ public class UserMenu implements SubMenu {
     private void confirmationChooser(User user) {
         System.out.println("Choose operation: Y(confirm order) or C(for choose product) or E(for exit from shop)");
         while (true) {
-            switch (scanner.next().toUpperCase()) {
+            switch (scanner.nextLine().toUpperCase()) {
                 case "Y":
                     orderService.confirmOrder(order, user);
                     new MainMenu().showSubMenu(this, user);//orderService.confirmOrder(user, order)
@@ -182,7 +178,6 @@ public class UserMenu implements SubMenu {
 
     @Override
     public void exit() {
-        scanner.close();
         new LoginMenu().show();
     }
 
