@@ -3,7 +3,6 @@ package model;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class User extends AbstractEntity {
     private String userName;
@@ -15,6 +14,11 @@ public class User extends AbstractEntity {
     private UserRole userRole;
 
     private List<Order> orderList;
+
+    public enum UserRole {
+        ADMIN,
+        CUSTOMER
+    }
 
     public User() {
         orderList = new ArrayList<>();
@@ -71,20 +75,6 @@ public class User extends AbstractEntity {
 
     public List<Order> getOrderList() {
         return orderList;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
-        User user = (User) o;
-        return isBlocked == user.isBlocked && Objects.equals(userName, user.userName) && Objects.equals(password, user.password) && userRole == user.userRole && Objects.equals(orderList, user.orderList);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(super.hashCode(), userName, password, isBlocked, userRole, orderList);
     }
 
     @Override

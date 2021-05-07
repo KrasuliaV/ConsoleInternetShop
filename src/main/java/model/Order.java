@@ -9,7 +9,7 @@ public class Order extends AbstractEntity {
 
     private String ownerName;
 
-    private List<Product> products;
+    private final List<Product> products;
 
     private boolean isConfirmed;
 
@@ -34,10 +34,6 @@ public class Order extends AbstractEntity {
 
     public List<Product> getProducts() {
         return products;
-    }
-
-    public void setProducts(List<Product> products) {
-        this.products = products;
     }
 
     public boolean isConfirmed() {

@@ -20,6 +20,7 @@ public class ChatServiceImpl implements ChatService {
     @Override
     public void sendMessageToManager(User user, String message) {
         ChatPM chatPM = chatDao.getByClientId(user.getId());
+
         if (chatPM == null) {
             chatDao.create(new ChatPM(user.getId(), user.getUserName(), message));
         } else {
@@ -50,7 +51,4 @@ public class ChatServiceImpl implements ChatService {
         chatDao.update(chatPM);
     }
 
-    public static void main(String[] args) {
-        System.out.println(new ChatServiceImpl().getMassageByClientId(1L));
-    }
 }

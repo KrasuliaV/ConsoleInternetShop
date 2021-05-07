@@ -2,7 +2,6 @@ package view.impl;
 
 
 import model.User;
-import model.UserRole;
 import service.UserService;
 import service.impl.UserServiceImpl;
 import view.Menu;
@@ -14,9 +13,9 @@ import java.util.function.BiFunction;
 
 public class LoginMenu implements Menu {
 
-    private UserService userService;
-    private String[] items = {"1.Login", "2.Register", "0. Exit"};
-    private Scanner scanner;
+    private final UserService userService;
+    private static final String[] items = {"1.Login", "2.Register", "0.Exit"};
+    private final Scanner scanner;
 
     public LoginMenu() {
         this.userService = new UserServiceImpl();
@@ -27,7 +26,7 @@ public class LoginMenu implements Menu {
         showItems(items);
 
         while (true) {
-            switch (scanner.next()) {
+            switch (scanner.nextLine()) {
                 case "1":
                     loginSubMenu();
                     break;
@@ -38,19 +37,21 @@ public class LoginMenu implements Menu {
                     exit();
                     break;
                 default:
-                    System.out.println("Enter right operation number");
+                    System.out.println(ENTER_RIGHT_OPERATION);
             }
         }
     }
 
     @Override
     public void exit() {
+        scanner.close();
         System.out.printf("%sGoodbye, my dear friend.%n We will be waiting for you next time!!!", ConsoleColors.YELLOW_BOLD.getColorCode());
         System.exit(1);
     }
 
     private void loginSubMenu() {
         User user = getUser(userService::login);
+
         if (Optional.ofNullable(user).isPresent()) {
             checkUser(user);
         } else {
@@ -60,12 +61,13 @@ public class LoginMenu implements Menu {
     }
 
     private void checkUser(User user) {
-        if (user.getUserRole().equals(UserRole.CUSTOMER)) {
+        if (user.getUserRole().equals(User.UserRole.CUSTOMER)) {
             checkBlockingUserStatus(user);
         } else new MainMenu().showSubMenu(new AdminMenu(), user);
     }
 
     private void checkBlockingUserStatus(User user) {
+
         if (user.isBlocked()) {
             System.out.printf("%sYour account was blocked by admin!!!!%nYou can't use this shop%s%n", ConsoleColors.RED.getColorCode(), ConsoleColors.RESET.getColorCode());
             show();
@@ -85,6 +87,7 @@ public class LoginMenu implements Menu {
 
         System.out.println("input password:");
         String password = scanner.next();
+
         return method.apply(login, password);
     }
 }

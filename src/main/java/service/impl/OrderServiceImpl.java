@@ -22,41 +22,41 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public boolean addProductToBucket(Order order, String productId) {
-        if (productId.matches("[\\d]+")) {
-            Product product = productDao.getById(Long.parseLong(productId));
-            if (product != null) {
-                order.getProducts().add(product);
-                return true;
-            } else {
-                return false;
-            }
-        } else {
+    public boolean addProductToBucket(Order order, String productNameOrId) {
+        Product product = productNameOrId.matches("[\\d]+") ?
+                productDao.getById(Long.parseLong(productNameOrId))
+                : productDao.getByProductName(productNameOrId);
+
+        if (product == null) {
             return false;
         }
+        order.getProducts().add(product);
+        return true;
     }
 
     @Override
     public void confirmOrder(Order order, User user) {
-        if (order != null && user != null) {
-            order.setOwnerName(user.getUserName());
-            orderDao.create(order);
+        if (order == null || user == null) {
+            return;
         }
+
+        order.setOwnerName(user.getUserName());
+        orderDao.create(order);
     }
 
     @Override
     public boolean changeStatus(String choiceOrderId) {
-        if (choiceOrderId.matches("[\\d]+")) {
-            Order order = orderDao.getById(Long.parseLong(choiceOrderId));
-            if (order != null) {
-                order.setConfirmed(true);
-                return true;
-            } else {
-                return false;
-            }
-        } else {
+        if (!choiceOrderId.matches("[\\d]+")) {
             return false;
         }
+
+        Order order = orderDao.getById(Long.parseLong(choiceOrderId));
+        if (order == null) {
+            return false;
+        }
+
+        order.setConfirmed(true);
+        return true;
     }
 
     @Override

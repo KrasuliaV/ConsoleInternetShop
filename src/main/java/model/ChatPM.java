@@ -49,7 +49,4 @@ public class ChatPM extends AbstractEntity {
         return messageList;
     }
 
-    public void setMessageList(List<String> messageList) {
-        this.messageList = messageList;
-    }
 }

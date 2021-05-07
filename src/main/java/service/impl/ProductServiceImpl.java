@@ -6,6 +6,7 @@ import service.ProductService;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 public class ProductServiceImpl implements ProductService {
 
@@ -21,42 +22,42 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Product getProductByName(String productName) {
-        if (Optional.ofNullable(productName).isPresent()) {
-            return productDao.getByProductName(productName);
-        } else {
-            return null;
-        }
-    }
-
-    @Override
     public void createProduct(String name, String price) {
-        if (price.matches("[\\d.\\d]+") && name != null) {
+        if (!price.matches("[\\d.\\d]+") && name != null) {
+            return;
+        }
+        Product productByName = productDao.getByProductName(name);
+
+        if (productByName != null) {
+            productByName.setPrice(Double.parseDouble(price));
+        } else {
             productDao.create(new Product(name, Double.parseDouble(price)));
         }
     }
 
     @Override
     public Product getProductById(String next) {
-        if (next.matches("[\\d]+")) {
-            return productDao.getById(Long.parseLong(next));
-        } else {
-            return null;
-        }
+        return next.matches("[\\d]+") ? productDao.getById(Long.parseLong(next)) : null;
     }
 
     @Override
-    public void editProduct(Product product) {
-        productDao.update(product);
+    public Product getProductByName(String productName) {
+        return Optional.ofNullable(productName).isPresent() ? productDao.getByProductName(productName) : null;
     }
 
     @Override
     public void setNewPrice(Product product, String newPrice) {
-        product.setPrice(Double.parseDouble(newPrice));
+        setSome(product::setPrice, product, Double.parseDouble(newPrice));
     }
 
     @Override
     public void setNewName(Product product, String newName) {
-        product.setName(newName);
+        setSome(product::setName, product, newName);
     }
+
+    private <T> void setSome(Consumer<T> consumer, Product product, T someProductParameter) {
+        consumer.accept(someProductParameter);
+        productDao.update(product);
+    }
+
 }
