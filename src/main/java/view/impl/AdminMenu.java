@@ -22,20 +22,19 @@ import java.util.function.Supplier;
 
 public class AdminMenu implements SubMenu {
 
-    public static final String ENTER_RIGHT_OPERATION = "Enter right operation";
+    private final Scanner scanner;
 
     private final ProductService productService;
     private final OrderService orderService;
     private final UserService userService;
     private final ChatService chatService;
-    private final Scanner scanner;
 
     public AdminMenu() {
+        scanner = new Scanner(System.in);
         this.productService = new ProductServiceImpl();
         this.orderService = new OrderServiceImpl();
         this.userService = new UserServiceImpl();
         this.chatService = new ChatServiceImpl();
-        this.scanner = new Scanner(System.in);
     }
 
     @Override
@@ -110,6 +109,7 @@ public class AdminMenu implements SubMenu {
 
     private void checkMessage(User user) {
         List<ChatPM> chatsWithoutAnswer = chatService.getChatsWithoutAnswer();
+
         if (chatsWithoutAnswer.isEmpty()) {
             System.out.println("Shop doesn't have some message without answer");
             new MainMenu().showSubMenu(this, user);
@@ -126,9 +126,9 @@ public class AdminMenu implements SubMenu {
     }
 
     private void chooserMessageAndAnswering(User user, List<ChatPM> chatsWithoutAnswer) {
+
         if (chatsWithoutAnswer.size() == 1) {
-            ChatPM chatPM = chatsWithoutAnswer.get(0);
-            chatWithCustomer(chatPM, user);
+            chatWithCustomer(chatsWithoutAnswer.get(0), user);
         } else {
             chatChooser(user, chatsWithoutAnswer);
         }
@@ -137,6 +137,7 @@ public class AdminMenu implements SubMenu {
     private void chatChooser(User user, List<ChatPM> chatsWithoutAnswer) {
         System.out.println("Enter user id for choose chat");
         String enteringUserId = scanner.nextLine();
+
         if (enteringUserId.matches("[\\d]+")) {
             ChatPM chatPM = getChatByCustomerId(enteringUserId, chatsWithoutAnswer);
             answeringToCustomer(user, chatsWithoutAnswer, chatPM);
@@ -146,6 +147,7 @@ public class AdminMenu implements SubMenu {
     }
 
     private void answeringToCustomer(User user, List<ChatPM> chatsWithoutAnswer, ChatPM chatPM) {
+
         if (chatPM.getMessageList().isEmpty()) {
             System.out.println("You enter incorrect user id");
             chatChooser(user, chatsWithoutAnswer);
@@ -157,9 +159,9 @@ public class AdminMenu implements SubMenu {
     private void chatWithCustomer(ChatPM chatPM, User user) {
         System.out.println(chatPM.getMessageList());
         System.out.println("Enter answer for customer");
-        String answer = scanner.nextLine();
         chatService.sendMessageToCustomer(chatPM, scanner.nextLine());
         System.out.println("Your message was sent to the customer");
+
         new MainMenu().showSubMenu(this, user);
     }
 
@@ -174,7 +176,8 @@ public class AdminMenu implements SubMenu {
         int pageCounter = 1;
         List<Product> allProductList = productService.getAllProductList();
         while (true) {
-            System.out.println("Enter product number or N(for go to next prod. page) or A(for add new product) or B(for back to last menu)");
+            String[] productItems = {" - Enter product number", " - N(for go to next prod. page)", " - A(for add new product)", " - B(for back to last menu)"};
+            showItems(productItems);
             showProductPage(getPage(allProductList, pageCounter, 2));
             String choice = scanner.nextLine().toUpperCase(Locale.ROOT);
             switch (choice) {
@@ -197,26 +200,24 @@ public class AdminMenu implements SubMenu {
     }
 
     private void makeChangeToProduct(Product product, User user) {
-        System.out.println("Enter what you want to change N(for name change) or P(for price change) or B(for back to last menu)");
-        while (true) {
-            switch (scanner.nextLine().toUpperCase(Locale.ROOT)) {
-                case "N":
-                    changeProductName(product);
-                    productsSubMenuShow(user);
-                    break;
-                case "P":
-                    changeProductPrice(product);
-                    productsSubMenuShow(user);
-                    break;
-                case "B":
-                    editProduct(user);
-                    break;
-                default:
-                    System.out.println(ENTER_RIGHT_OPERATION);
-                    makeChangeToProduct(product, user);
+        String[] productItems = {" - N(for name change)", " - P(for price change)", " - B(for back to last menu)"};
+        showItems(productItems);
+        switch (scanner.nextLine().toUpperCase(Locale.ROOT)) {
+            case "N":
+                changeProductName(product);
+                productsSubMenuShow(user);
+                break;
+            case "P":
+                changeProductPrice(product);
+                productsSubMenuShow(user);
+                break;
+            case "B":
+                editProduct(user);
+                break;
+            default:
+                System.out.println(ENTER_RIGHT_OPERATION);
+                makeChangeToProduct(product, user);
             }
-        }
-
     }
 
     private void changeProductName(Product product) {
@@ -241,6 +242,7 @@ public class AdminMenu implements SubMenu {
     }
 
     private String getRightPrice(String price) {
+
         if (price.matches("[\\d.\\d]+")) {
             return price;
         } else {

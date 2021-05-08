@@ -21,7 +21,8 @@ public class OrderDaoImpl implements OrderDao {
 
     @Override
     public Order getById(Long id) {
-        return HomeDB.getUsersDB().stream()
+        return HomeDB.getUsersDB()
+                .stream()
                 .flatMap(user -> user.getOrderList().stream())
                 .filter(order -> order.getId().equals(id))
                 .findFirst()
@@ -29,29 +30,29 @@ public class OrderDaoImpl implements OrderDao {
     }
 
     @Override
-    public Order delete(Order order) {
+    public void delete(Order order) {
         getUserByOrder(order).getOrderList().remove(order);
-        return order;
     }
 
     @Override
     public Order update(Order order) {
         List<Order> ordersListOfOneUser = getUserByOrder(order).getOrderList();
         ordersListOfOneUser.set(
-                ordersListOfOneUser.indexOf(
-                        getById(order.getId())), order);
+                ordersListOfOneUser.indexOf(getById(order.getId())), order);
         return order;
     }
 
     @Override
     public List<Order> getAll() {
-        return HomeDB.getUsersDB().stream()
+        return HomeDB.getUsersDB()
+                .stream()
                 .flatMap(user -> user.getOrderList().stream())
                 .collect(Collectors.toList());
     }
 
     private User getUserByOrder(Order order) {
-        return HomeDB.getUsersDB().stream()
+        return HomeDB.getUsersDB()
+                .stream()
                 .filter(user -> isThereOrder(user, order.getId()))
                 .findFirst()
                 .orElse(null);
@@ -65,7 +66,8 @@ public class OrderDaoImpl implements OrderDao {
     }
 
     private User getUserByOrderOwner(Order order) {
-        return HomeDB.getUsersDB().stream()
+        return HomeDB.getUsersDB()
+                .stream()
                 .filter(user -> user.getUserName().equals(order.getOwnerName()))
                 .findFirst()
                 .orElse(null);

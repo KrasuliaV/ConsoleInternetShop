@@ -19,21 +19,23 @@ public class ProductDaoImpl implements ProductDao {
 
     @Override
     public Product getById(Long id) {
-        return HomeDB.getProductDB().stream()
+        return HomeDB.getProductDB()
+                .stream()
                 .filter(product -> product.getId().equals(id))
                 .findFirst()
                 .orElse(null);
     }
 
     @Override
-    public Product delete(Product product) {
+    public void delete(Product product) {
         HomeDB.getProductDB().remove(product);
-        return product;
     }
 
     @Override
     public Product update(Product product) {
-        return HomeDB.getProductDB().set(HomeDB.getProductDB().indexOf(getById(product.getId())), product);
+        int insertionIndex = HomeDB.getProductDB().indexOf(getById(product.getId()));
+
+        return HomeDB.getProductDB().set(insertionIndex, product);
     }
 
     @Override
@@ -43,7 +45,8 @@ public class ProductDaoImpl implements ProductDao {
 
     @Override
     public Product getByProductName(String productName) {
-        return HomeDB.getProductDB().stream()
+        return HomeDB.getProductDB()
+                .stream()
                 .filter(product -> product.getName().equals(productName))
                 .findFirst()
                 .orElse(null);

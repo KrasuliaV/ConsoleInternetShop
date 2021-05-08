@@ -3,7 +3,6 @@ package service.impl;
 import dao.UserDao;
 import dao.impl.UserDaoImpl;
 import model.User;
-import model.UserRole;
 import service.UserService;
 
 import java.util.List;
@@ -24,40 +23,33 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User register(String username, String password) {
-        if (login(username, password) == null) {
-            return userDao.create(new User(username, password));
-        } else {
-            return login(username, password);
-        }
+        return login(username, password) == null ? userDao.create(new User(username, password))
+                : login(username, password);
     }
 
     @Override
     public List<User> getAllUserNotAdmin() {
-        return userDao.getUsersByRole(UserRole.CUSTOMER);
+        return userDao.getUsersByRole(User.UserRole.CUSTOMER);
     }
 
     @Override
     public boolean changeStatus(String choiceUserId) {
-        if (choiceUserId.matches("[\\d]+")) {
-            User user = userDao.getById(Long.parseLong(choiceUserId));
-            if (user != null) {
-                user.setBlocked(!user.isBlocked());
-                return true;
-            } else {
-                return false;
-            }
-        } else {
+        if (!choiceUserId.matches("[\\d]+")) {
             return false;
         }
+
+        User user = userDao.getById(Long.parseLong(choiceUserId));
+        if (user == null) {
+            return false;
+        }
+
+        user.setBlocked(!user.isBlocked());
+        return true;
     }
 
     @Override
     public User getUserById(String enteringUserId) {
-        if (enteringUserId.matches("[\\d]+")) {
-            return Optional.ofNullable(userDao.getById(Long.parseLong(enteringUserId)))
-                    .orElse(null);
-        } else {
-            return null;
-        }
+        return enteringUserId.matches("[\\d]+") ?
+                Optional.ofNullable(userDao.getById(Long.parseLong(enteringUserId))).orElse(null) : null;
     }
 }

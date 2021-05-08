@@ -20,26 +20,28 @@ public class ChatDaoImpl implements ChatDao {
 
     @Override
     public ChatPM getById(Long id) {
-        return HomeDB.getChatDB().stream()
+        return HomeDB.getChatDB()
+                .stream()
                 .filter(chat -> chat.getId().equals(id))
                 .findFirst()
                 .orElse(null);
     }
 
     @Override
-    public ChatPM delete(ChatPM chatPM) {
+    public void delete(ChatPM chatPM) {
         HomeDB.getChatDB().remove(chatPM);
-        return chatPM;
     }
 
     @Override
     public ChatPM update(ChatPM chatPM) {
-        return HomeDB.getChatDB().set(HomeDB.getChatDB().indexOf(getById(chatPM.getId())), chatPM);
+        int insertionIndex = HomeDB.getChatDB().indexOf(getById(chatPM.getId()));
+        return HomeDB.getChatDB().set(insertionIndex, chatPM);
     }
 
     @Override
     public ChatPM getByClientId(Long id) {
-        return HomeDB.getChatDB().stream()
+        return HomeDB.getChatDB()
+                .stream()
                 .filter(chatPM -> chatPM.getCustomerId() == id)
                 .findFirst()
                 .orElse(null);
@@ -52,7 +54,8 @@ public class ChatDaoImpl implements ChatDao {
 
     @Override
     public List<ChatPM> getChatsWithoutAnswer() {
-        return HomeDB.getChatDB().stream()
+        return HomeDB.getChatDB()
+                .stream()
                 .filter(chatPM -> !chatPM.isAnswered())
                 .collect(Collectors.toList());
     }

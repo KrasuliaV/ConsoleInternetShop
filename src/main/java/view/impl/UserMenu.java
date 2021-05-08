@@ -17,21 +17,21 @@ import java.util.Scanner;
 
 public class UserMenu implements SubMenu {
 
-    public static final String ENTER_RIGHT_OPERATION = "Enter right operation";
     public static final String EMPTY_BUCKET = "You bucket is empty";
+
+    private final Scanner scanner;
 
     private final ProductService productService;
     private final OrderService orderService;
     private final ChatService chatService;
 
-    private final Scanner scanner;
     Order order;
 
     public UserMenu() {
+        scanner = new Scanner(System.in);
         this.productService = new ProductServiceImpl();
         this.orderService = new OrderServiceImpl();
         this.chatService = new ChatServiceImpl();
-        scanner = new Scanner(System.in);
     }
 
     @Override
@@ -88,13 +88,17 @@ public class UserMenu implements SubMenu {
         int pageCounter = 1;
         List<Product> allProductList = productService.getAllProductList();
         while (true) {
-            System.out.println(" - enter product number\n - N(for go to next prod. page)\n - B(for go to Bucket)\n - E(for exit from shop)");
+            String[] productItems = {" - Enter product number", " - N(for go to next prod. page)", " - B(for go to Bucket)", " - P(for go to prev. menu)", " - E(for exit from shop)"};
+            showItems(productItems);
             showProductPage(getPage(allProductList, pageCounter, 2));
             String choice = scanner.nextLine().toUpperCase(Locale.ROOT);
             switch (choice) {
                 case "B":
                     pageCounter = 1;
                     checkoutOrder(user);
+                    break;
+                case "P":
+                    productsSubMenuShow(user);
                     break;
                 case "N":
                     pageCounter++;
@@ -114,21 +118,22 @@ public class UserMenu implements SubMenu {
 
     private void searchingMenu(User user) {
         checkOrderForExistence();
-        System.out.println("Enter product name or B(for go to Bucket) or C(for choose product) or E(for exit from shop) ");
+        String[] productItems = {" - Enter product name", " - 1: Go to Bucket)", " - 2: Choose product", " - 0: Exit from shop"};
+        showItems(productItems);
         while (true) {
-            String choice = scanner.nextLine().toUpperCase(Locale.ROOT);
+            String choice = scanner.nextLine();
             switch (choice) {
-                case "B":
+                case "1":
                     checkoutOrder(user);
                     break;
-                case "C":
+                case "2":
                     productChooserMenu(user);
                     break;
-                case "E":
+                case "0":
                     exit();
                     break;
                 default:
-                    if (orderService.addProductToBucket(order, choice)) { // What better pass to method: product or product name
+                    if (orderService.addProductToBucket(order, choice)) {
                         searchingMenu(user);
                     }
                     System.out.println("You enter wrong product name. Try again");
@@ -157,12 +162,13 @@ public class UserMenu implements SubMenu {
     }
 
     private void confirmationChooser(User user) {
-        System.out.println("Choose operation: Y(confirm order) or C(for choose product) or E(for exit from shop)");
+        String[] productItems = {" - Y(confirm order)", " - C(for choose product)", " - E(for exit from shop)"};
+        showItems(productItems);
         while (true) {
             switch (scanner.nextLine().toUpperCase()) {
                 case "Y":
                     orderService.confirmOrder(order, user);
-                    new MainMenu().showSubMenu(this, user);//orderService.confirmOrder(user, order)
+                    new MainMenu().showSubMenu(this, user);
                     break;
                 case "C":
                     productChooserMenu(user);

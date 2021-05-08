@@ -10,7 +10,7 @@ public interface Dao<T extends AbstractEntity> {
 
     T getById(Long id);
 
-    T delete(T t);
+    void delete(T t);
 
     T update(T t);
 

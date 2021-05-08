@@ -8,14 +8,14 @@ import java.util.Scanner;
 
 public class MainMenu implements Menu {
 
-    private String[] items = {"1.Products menu", "2.Orders menu", "3.User's menu", "0.Exit"};
-    private Scanner scanner;
+    private final Scanner scanner = new Scanner(System.in);
+
+    private static String[] items = {"1.Products menu", "2.Orders menu", "3.User's menu", "0.Exit"};
 
     public void showSubMenu(SubMenu submenu, User user) {
-        scanner = new Scanner(System.in);
         showItems(items);
         while (true) {
-            switch (scanner.next()) {
+            switch (scanner.nextLine()) {
                 case "1":
                     submenu.productsSubMenuShow(user);
                     break;
@@ -29,7 +29,7 @@ public class MainMenu implements Menu {
                     exit();
                     break;
                 default:
-                    System.out.println("Enter right operation number");
+                    System.out.println(ENTER_RIGHT_OPERATION);
             }
         }
     }
