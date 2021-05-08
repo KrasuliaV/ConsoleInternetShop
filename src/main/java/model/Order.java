@@ -1,5 +1,6 @@
 package model;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -13,6 +14,8 @@ public class Order extends AbstractEntity {
 
     private boolean isConfirmed;
 
+    private BigDecimal totalPrice;
+
     public Order() {
         this.products = new ArrayList<>();
     }
@@ -22,6 +25,7 @@ public class Order extends AbstractEntity {
         this.ownerName = ownerName;
         this.products = products;
         this.isConfirmed = isConfirmed;
+        this.totalPrice = countTotalPrice();
     }
 
     public String getOwnerName() {
@@ -36,12 +40,22 @@ public class Order extends AbstractEntity {
         return products;
     }
 
-    public boolean isConfirmed() {
-        return isConfirmed;
-    }
-
     public void setConfirmed(boolean confirmed) {
         isConfirmed = confirmed;
+    }
+
+    public BigDecimal getTotalPrice() {
+        return totalPrice;
+    }
+
+    public void setTotalPrice() {
+        totalPrice = countTotalPrice();
+    }
+
+    private BigDecimal countTotalPrice() {
+        return products.stream()
+                .map(Product::getPrice)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
     private Map<String, Long> getRightProductList() {
@@ -54,6 +68,7 @@ public class Order extends AbstractEntity {
         return "Order{ id:" + id +
                 ", ownerName='" + ownerName + '\'' +
                 ", products=" + getRightProductList() +
+                ", total price=" + totalPrice +
                 ", isConfirmed=" + isConfirmed +
                 '}';
     }

@@ -66,7 +66,7 @@ public class UserMenu implements SubMenu {
         if (orderList.isEmpty()) {
             System.out.println("You don't have some order in this perfect shop!");
         } else {
-            System.out.println(user.getOrderList());
+            user.getOrderList().forEach(System.out::println);
         }
         new MainMenu().showSubMenu(this, user);
     }
@@ -143,8 +143,7 @@ public class UserMenu implements SubMenu {
 
     private void checkoutOrder(User user) {
         if (order == null) {
-            System.out.println(EMPTY_BUCKET);
-            productsSubMenuShow(user);
+            emptyBucketAction(user);
         } else {
             List<Product> products = order.getProducts();
             productListChecker(user, products);
@@ -153,12 +152,16 @@ public class UserMenu implements SubMenu {
 
     private void productListChecker(User user, List<Product> products) {
         if (products.isEmpty()) {
-            System.out.println(EMPTY_BUCKET);
-            productsSubMenuShow(user);
+            emptyBucketAction(user);
         } else {
             showProductPage(products);
             confirmationChooser(user);
         }
+    }
+
+    private void emptyBucketAction(User user) {
+        System.out.println(EMPTY_BUCKET);
+        productsSubMenuShow(user);
     }
 
     private void confirmationChooser(User user) {
