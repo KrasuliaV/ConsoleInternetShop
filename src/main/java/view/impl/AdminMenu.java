@@ -213,10 +213,10 @@ public class AdminMenu implements SubMenu {
                 break;
             case "B":
                 editProduct(user);
-                    break;
-                default:
-                    System.out.println(ENTER_RIGHT_OPERATION);
-                    makeChangeToProduct(product, user);
+                break;
+            default:
+                System.out.println(ENTER_RIGHT_OPERATION);
+                makeChangeToProduct(product, user);
             }
     }
 
