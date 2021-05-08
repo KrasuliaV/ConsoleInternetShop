@@ -41,6 +41,7 @@ public class OrderServiceImpl implements OrderService {
         }
 
         order.setOwnerName(user.getUserName());
+        order.setTotalPrice();
         orderDao.create(order);
     }
 
